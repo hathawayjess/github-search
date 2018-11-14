@@ -1,9 +1,10 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-error',
   templateUrl: './error.component.html',
-  styleUrls: ['./error.component.styl']
+  styleUrls: ['./error.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ErrorComponent implements OnInit {
 

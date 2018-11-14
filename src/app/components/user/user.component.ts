@@ -1,14 +1,22 @@
-import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Users } from '../../models/users.model';
+import { Component, OnInit, Input } from '@angular/core';
+import { GithubService } from '../../services/github.service';
+import { share } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user',
   templateUrl: './user.component.html',
-  styleUrls: ['./user.component.styl'],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  styleUrls: ['./user.component.scss']
 })
+export class UserComponent implements OnInit {
 
-export class UserComponent {
   @Input()
-  users: Users;
+  user: any;
+  details: any;
+
+  constructor(private githubService: GithubService) { }
+
+  ngOnInit() {
+    this.details = this.githubService.getUserDetails(this.user.url).pipe(share());
+  }
+
 }

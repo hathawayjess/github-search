@@ -1,0 +1,6 @@
+<div class="total-users">{{users.total_count | number: 0}} user(s)</div>
+<div class="user-card-wrap">
+  <div *ngFor="let user of users.items">
+    <app-user [user]="user"></app-user>
+  </div>
+</div>

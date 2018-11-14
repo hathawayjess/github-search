@@ -1,7 +1,15 @@
-<div class="container" [class.ready]="!!user">
-  <input [formControl]="findControl" placeholder="GitHub username" />
+<header class="header">
+  <i class="fa fa-github"></i>
+  <input [formControl]="findControl" placeholder="Search for username..." />
+</header>
 
-  <app-user *ngIf="users" [users]="users"></app-user>
+<div class="container">
+  <div *ngIf="users" class="button-container">
+    <button [disabled]="isFirstPage" (click)="previousPage()"><i class="fa fa-angle-double-left"></i> Previous</button>
+    <button [disabled]="isLastPage" (click)="nextPage()">Next <i class="fa fa-angle-double-right"></i></button>
+  </div>
+
+  <app-users *ngIf="users" [users]="users"></app-users>
 
   <app-error *ngIf="error"></app-error>
 </div>

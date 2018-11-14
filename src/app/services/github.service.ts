@@ -11,8 +11,12 @@ export class GithubService {
 
   constructor(private http: HttpClient) { }
 
-  getUsers (name: string): Observable <Users> {
-    const url = `https://api.github.com/search/users?q=${name}`;
+  getUsers (name: string, page: number): Observable <Users> {
+    const url = `https://api.github.com/search/users?q=${name}&page=${page}&per_page=10`;
     return this.http.get <Users> (url);
+  }
+
+  getUserDetails (url: string) {
+    return this.http.get(url);
   }
 }

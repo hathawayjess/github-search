@@ -1,3 +1,15 @@
-<div *ngFor="let u of users.items">
-  {{u.login}}
+<div class="user-card">
+  <div class="main-info-wrap">
+    <a class="avatar" [href]="user.html_url">
+      <img [src]="user.avatar_url+'&amp;s=80'" [alt]="user.name"/>
+    </a>
+    <div class="user-info">
+      <div><a class="username" [href]="user.html_url">{{user.login}}</a>  <span class="real-name">  {{(details | async)?.name}}</span></div>
+      <div class="description">{{(details | async)?.bio | limitTo: 50}}</div>
+      <div class="user-meta">
+        <i class="fa fa-map-marker"></i> <span>{{(details | async)?.location}}</span>
+        <i class="fa fa-envelope-o"></i> <span>  {{(details | async)?.email}}</span>
+      </div>
+    </div>
+  </div>
 </div>
