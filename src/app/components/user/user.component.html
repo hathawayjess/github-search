@@ -7,8 +7,8 @@
       <div><a class="username" [href]="user.html_url">{{user.login}}</a>  <span class="real-name">  {{(details | async)?.name}}</span></div>
       <div class="description">{{(details | async)?.bio | limitTo: 50}}</div>
       <div class="user-meta">
-        <i class="fa fa-map-marker"></i> <span>{{(details | async)?.location}}</span>
-        <i class="fa fa-envelope-o"></i> <span>  {{(details | async)?.email}}</span>
+        <i class="fa fa-map-marker"></i> <span>{{(details | async)?.location || "Not specified"}}</span>
+        <i class="fa fa-envelope-o"></i> <span>  {{(details | async)?.email || "Not specified"}}</span>
       </div>
     </div>
   </div>
