@@ -10,5 +10,5 @@ import { Users } from '../../models/users.model';
 
 export class UsersComponent {
   @Input()
-  users$: Users;
+  users: any;
 }

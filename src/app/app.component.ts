@@ -1,66 +1,52 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GithubService } from './services/github.service';
-import { Users } from './models/users.model';
-import { filter, switchMap, debounceTime } from 'rxjs/operators';
+import { Subject, Observable } from 'rxjs';
+import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
+
 export class AppComponent implements OnInit {
   searchControl = new FormControl ();
   error: boolean = false;
-  users$: Users = null;
+  users$: Observable<{}>;
   page: number = 1;
   maxPages: number;
-  isFirstPage: boolean = true;
-  isLastPage: boolean = false;
+
+  private searchParams = new Subject<object>();
+
+  getUsers(term: string, page: number) {
+    this.searchParams.next({ value: term, page: page });
+  }
 
   constructor (private githubService: GithubService) {}
 
   ngOnInit () {
-    this.searchControl.valueChanges
+    this.users$ = this.searchParams
       .pipe(
-        filter(value => value.length > 2),
         debounceTime(1000),
-        switchMap(value => this.getUsers(value, this.page) )
-      )
-      .subscribe(
-        (users) => { this.populateUsers(users); },
-        (err) => { this.handleError(err); },
-        () => { console.log('complete!'); }
+        distinctUntilChanged(),
+        switchMap(params => this.githubService.getUsers(params))
       );
   }
 
   handleError(err) {
+    console.error('Error: ', err);
     this.error = err;
-  }
-
-  populateUsers(users) {
-    this.users$ = users;
   }
 
   goPrevious() {
     this.page--;
-    this.getUsers(this.searchControl.value, this.page)
-      .subscribe(
-        (users) => { this.populateUsers(users); },
-        (err) => { this.handleError(err); },
-        () => { console.log('complete!'); });
+    this.getUsers(this.searchControl.value, this.page);
   }
 
   goNext() {
     this.page++;
-    this.getUsers(this.searchControl.value, this.page)
-      .subscribe(
-        (users) => { this.populateUsers(users); },
-        (err) => { this.handleError(err); },
-        () => { console.log('complete!'); }
-      );
-  }
+    this.getUsers(this.searchControl.value, this.page);
 
-  getUsers(value: string, page: number) {
-    return this.githubService.getUsers(value, page);
   }
 }

@@ -1,12 +1,14 @@
 <header class="header">
   <i class="fa fa-github"></i>
-  <input [formControl]="searchControl" placeholder="Search for username..." />
+  <input #searchBox [formControl]="searchControl"  (keyup)="getUsers($event.target.value, 1)" placeholder="Search for username..." />
 </header>
 
 <div class="container">
-  <app-paginator *ngIf="users$" [page]="page" [total_count]="users$.total_count"  (nextPage)="goNext($event)" (previousPage)="goPrevious($event)"></app-paginator>
+  <div *ngIf="(users$ | async) as users">
+    <app-paginator [page]="page" [total_count]="users.total_count"  (nextPage)="goNext($event)" (previousPage)="goPrevious($event)"></app-paginator>
 
-  <app-users *ngIf="users$" [users$]="users$"></app-users>
+    <app-users [users]="users"></app-users>
+  </div>
 
   <app-error *ngIf="error" [error]="error"></app-error>
 </div>
