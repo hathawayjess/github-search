@@ -20,6 +20,7 @@ export class AppComponent implements OnInit {
   private searchParams = new Subject<object>();
 
   getUsers(term: string, page: number) {
+    this.page = page;
     this.searchParams.next({ value: term, page: page });
   }
 
