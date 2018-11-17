@@ -1,0 +1,4 @@
+<div class="button-container" *ngIf="page">
+  <button (click)="onPrevious()" [disabled]="firstPage()"><i class="fa fa-angle-double-left"></i> Previous</button>
+  <button (click)="onNext()" [disabled]="lastPage()"><i class="fa fa-angle-double-right"></i> Next</button>
+</div>

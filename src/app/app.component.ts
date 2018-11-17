@@ -2,18 +2,16 @@ import { Component, OnInit } from '@angular/core';
 import { FormControl } from '@angular/forms';
 import { GithubService } from './services/github.service';
 import { Users } from './models/users.model';
-import { filter, switchMap, debounceTime, catchError } from 'rxjs/operators';
-import { EMPTY } from 'rxjs';
-
+import { filter, switchMap, debounceTime } from 'rxjs/operators';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  findControl = new FormControl ();
+  searchControl = new FormControl ();
   error: boolean = false;
-  users: Users = null;
+  users$: Users = null;
   page: number = 1;
   maxPages: number;
   isFirstPage: boolean = true;
@@ -22,53 +20,47 @@ export class AppComponent implements OnInit {
   constructor (private githubService: GithubService) {}
 
   ngOnInit () {
-    this.findControl.valueChanges
-      .pipe (
-        filter (value => value.length > 2),
-        debounceTime (1000),
-        switchMap (value =>
-          this.githubService.getUsers (value, this.page) .pipe (
-            catchError (err => {
-              this.users = null;
-              this.error = true;
-              return EMPTY;
-            })
-          )
-        )
+    this.searchControl.valueChanges
+      .pipe(
+        filter(value => value.length > 2),
+        debounceTime(1000),
+        switchMap(value => this.getUsers(value, this.page) )
       )
-      .subscribe (users => {
-        this.users = users;
-        this.error = false;
-        this.maxPages = Math.ceil(users.total_count / 30);
-      });
+      .subscribe(
+        (users) => { this.populateUsers(users); },
+        (err) => { this.handleError(err); },
+        () => { console.log('complete!'); }
+      );
   }
 
-
-  setPage(page: number) {
-    // make sure current page is in range
-    if (page < 1) {
-      page = 1;
-    } else if (page > this.maxPages) {
-      page = this.maxPages;
-    }
-
-    this.page = page;
-    if (this.page > 1) { this.isFirstPage = false; }
-    if (this.page === 1) { this.isFirstPage = true; }
-    if (this.page === this.maxPages) { this.isLastPage = true; }
+  handleError(err) {
+    this.error = err;
   }
-  nextPage() {
-    this.setPage(this.page + 1);
-    this.githubService.getUsers(this.findControl.value, this.page)
-      .subscribe( users => {
-        this.users = users;
-      });
+
+  populateUsers(users) {
+    this.users$ = users;
   }
-  previousPage() {
-    this.setPage(this.page - 1);
-    this.githubService.getUsers(this.findControl.value, this.page)
-      .subscribe( users => {
-        this.users = users;
-      });
+
+  goPrevious() {
+    this.page--;
+    this.getUsers(this.searchControl.value, this.page)
+      .subscribe(
+        (users) => { this.populateUsers(users); },
+        (err) => { this.handleError(err); },
+        () => { console.log('complete!'); });
+  }
+
+  goNext() {
+    this.page++;
+    this.getUsers(this.searchControl.value, this.page)
+      .subscribe(
+        (users) => { this.populateUsers(users); },
+        (err) => { this.handleError(err); },
+        () => { console.log('complete!'); }
+      );
+  }
+
+  getUsers(value: string, page: number) {
+    return this.githubService.getUsers(value, page);
   }
 }

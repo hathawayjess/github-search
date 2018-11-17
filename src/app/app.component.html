@@ -1,17 +1,14 @@
 <header class="header">
   <i class="fa fa-github"></i>
-  <input [formControl]="findControl" placeholder="Search for username..." />
+  <input [formControl]="searchControl" placeholder="Search for username..." />
 </header>
 
 <div class="container">
-  <div *ngIf="users" class="button-container">
-    <button [disabled]="isFirstPage" (click)="previousPage()"><i class="fa fa-angle-double-left"></i> Previous</button>
-    <button [disabled]="isLastPage" (click)="nextPage()">Next <i class="fa fa-angle-double-right"></i></button>
-  </div>
+  <app-paginator *ngIf="users$" [page]="page" [total_count]="users$.total_count"  (nextPage)="goNext($event)" (previousPage)="goPrevious($event)"></app-paginator>
 
-  <app-users *ngIf="users" [users]="users"></app-users>
+  <app-users *ngIf="users$" [users$]="users$"></app-users>
 
-  <app-error *ngIf="error"></app-error>
+  <app-error *ngIf="error" [error]="error"></app-error>
 </div>
 
 
