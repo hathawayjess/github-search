@@ -11,6 +11,6 @@
         <i class="fa fa-envelope-o"></i> <span>  {{(details$ | async)?.email || "Not specified"}}</span>
       </div>
     </div>
-    <div class="followers"><span>{{(followers$ | async)?.length || 0}}</span> followers</div>
+    <div class="followers"><span>{{(followers$ | async) || 0}}</span> followers</div>
   </div>
 </div>

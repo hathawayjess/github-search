@@ -1,8 +1,4 @@
-import { Component, OnInit } from '@angular/core';
-import { FormControl } from '@angular/forms';
-import { GithubService } from './services/github.service';
-import { Subject, Observable } from 'rxjs';
-import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-root',
@@ -10,37 +6,6 @@ import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
   styleUrls: ['./app.component.scss']
 })
 
-export class AppComponent implements OnInit {
-  searchControl = new FormControl ();
-  users$: Observable<{}>;
-  page: number = 1;
-  maxPages: number;
+export class AppComponent {
 
-  private searchParams = new Subject<object>();
-
-  getUsers(term: string, page: number) {
-    this.page = page;
-    this.searchParams.next({ value: term, page: page });
-  }
-
-  constructor (private githubService: GithubService) {}
-
-  ngOnInit () {
-    this.users$ = this.searchParams
-      .pipe(
-        debounceTime(1000),
-        distinctUntilChanged(),
-        switchMap(params => this.githubService.getUsers(params))
-      );
-  }
-
-  goPrevious() {
-    this.page--;
-    this.getUsers(this.searchControl.value, this.page);
-  }
-
-  goNext() {
-    this.page++;
-    this.getUsers(this.searchControl.value, this.page);
-  }
 }

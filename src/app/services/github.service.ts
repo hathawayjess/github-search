@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { Observable, throwError, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -30,7 +30,8 @@ export class GithubService {
   getUserFollowers (url: string): Observable<any> {
     return this.http.get <any> (url)
       .pipe(
-      catchError(this.handleError)
+        map(data => data.length),
+        catchError(this.handleError)
     );
   }
 
@@ -39,11 +40,9 @@ export class GithubService {
       console.error('An error occurred:', error.error.message);
     } else {
       console.error(
-        `Server error code ${error.status}, ` +
-        `body was: ${error.error}`);
+        `Server error code ${error.status}: ${error.statusText}`);
     }
-    return throwError(
-      'Something went wrong; please try again later.');
+    return throwError('Something went wrong; please try again later.');
   }
 
 }

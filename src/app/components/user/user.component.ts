@@ -1,7 +1,7 @@
-import { Component, OnInit, Input } from '@angular/core';
+import {Component, OnInit, Input, EventEmitter, Output} from '@angular/core';
 import { GithubService } from '../../services/github.service';
-import { Observable } from 'rxjs';
-import { share } from 'rxjs/operators';
+import { Observable, throwError } from 'rxjs';
+import { share, catchError } from 'rxjs/operators';
 
 @Component({
   selector: 'app-user',
@@ -15,11 +15,27 @@ export class UserComponent implements OnInit {
   details$: Observable<any>;
   followers$: Observable<any>;
 
+  @Output()
+  errorRaised = new EventEmitter();
+
   constructor(private githubService: GithubService) { }
 
   ngOnInit() {
-    this.details$ = this.githubService.getUserDetails(this.user.url).pipe(share());
-    this.followers$ = this.githubService.getUserFollowers(this.user.followers_url).pipe(share());
+    this.details$ = this.githubService.getUserDetails(this.user.url).pipe(
+      catchError(error => {
+        this.errorRaised.emit();
+        return throwError(error);
+      }),
+        share()
+      );
+
+    // TODO: max followers returned from Github API is 30, will need to use a cursor and possibly GraphQL to get an accurate number
+    this.followers$ = this.githubService.getUserFollowers(this.user.followers_url).pipe(
+      catchError(error => {
+        this.errorRaised.emit();
+        return throwError(error);
+      }),
+      share());
   }
 
 }
