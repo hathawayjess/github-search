@@ -12,7 +12,6 @@ import { switchMap, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 export class AppComponent implements OnInit {
   searchControl = new FormControl ();
-  error: boolean = false;
   users$: Observable<{}>;
   page: number = 1;
   maxPages: number;
@@ -35,11 +34,6 @@ export class AppComponent implements OnInit {
       );
   }
 
-  handleError(err) {
-    console.error('Error: ', err);
-    this.error = err;
-  }
-
   goPrevious() {
     this.page--;
     this.getUsers(this.searchControl.value, this.page);
@@ -48,6 +42,5 @@ export class AppComponent implements OnInit {
   goNext() {
     this.page++;
     this.getUsers(this.searchControl.value, this.page);
-
   }
 }

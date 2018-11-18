@@ -1,6 +1,4 @@
 import { Component, Input, ChangeDetectionStrategy, OnInit } from '@angular/core';
-import { Users } from '../../models/users.model';
-
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
